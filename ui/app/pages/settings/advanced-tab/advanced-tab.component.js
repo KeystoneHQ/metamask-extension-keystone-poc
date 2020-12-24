@@ -10,7 +10,6 @@ import { MOBILE_SYNC_ROUTE } from '../../../helpers/constants/routes'
 export default class AdvancedTab extends PureComponent {
   static contextTypes = {
     t: PropTypes.func,
-    metricsEvent: PropTypes.func,
   }
 
   static propTypes = {
@@ -133,13 +132,6 @@ export default class AdvancedTab extends PureComponent {
               className="settings-tab__button--red"
               onClick={(event) => {
                 event.preventDefault()
-                this.context.metricsEvent({
-                  eventOpts: {
-                    category: 'Settings',
-                    action: 'Reset Account',
-                    name: 'Reset Account',
-                  },
-                })
                 showResetAccountConfirmationModal()
               }}
             >
@@ -469,14 +461,12 @@ export default class AdvancedTab extends PureComponent {
       <div className="settings-page__body">
         {warning && <div className="settings-tab__error">{warning}</div>}
         {this.renderStateLogs()}
-        {this.renderMobileSync()}
         {this.renderResetAccount()}
         {this.renderAdvancedGasInputInline()}
         {this.renderHexDataOptIn()}
-        {this.renderShowConversionInTestnets()}
         {this.renderUseNonceOptIn()}
+        {this.renderShowConversionInTestnets()}
         {this.renderAutoLockTimeLimit()}
-        {this.renderThreeBoxControl()}
         {this.renderIpfsGatewayControl()}
       </div>
     )

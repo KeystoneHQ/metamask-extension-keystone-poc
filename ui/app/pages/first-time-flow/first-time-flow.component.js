@@ -1,17 +1,19 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { Switch, Route } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import Unlock from '../unlock-page'
 import {
   DEFAULT_ROUTE,
-  INITIALIZE_WELCOME_ROUTE,
-  INITIALIZE_CREATE_PASSWORD_ROUTE,
-  INITIALIZE_SEED_PHRASE_ROUTE,
-  INITIALIZE_UNLOCK_ROUTE,
-  INITIALIZE_SELECT_ACTION_ROUTE,
-  INITIALIZE_END_OF_FLOW_ROUTE,
-  INITIALIZE_METAMETRICS_OPT_IN_ROUTE,
   INITIALIZE_BACKUP_SEED_PHRASE_ROUTE,
+  INITIALIZE_CREATE_PASSWORD_ROUTE,
+  INITIALIZE_END_OF_FLOW_ROUTE,
+  INITIALIZE_IMPORT_COBO_VAULT_ROUTE,
+  INITIALIZE_SEED_PHRASE_ROUTE,
+  INITIALIZE_SELECT_ACTION_ROUTE,
+  INITIALIZE_UNLOCK_ROUTE,
+  INITIALIZE_WELCOME_ROUTE,
+  INITIALIZE_CREATE_NEW_VAULT_ROUTE,
+  INITIALIZE_CREATE_COBO_VAULT_HINT,
 } from '../../helpers/constants/routes'
 import FirstTimeFlowSwitch from './first-time-flow-switch'
 import Welcome from './welcome'
@@ -19,13 +21,17 @@ import SelectAction from './select-action'
 import EndOfFlow from './end-of-flow'
 import CreatePassword from './create-password'
 import SeedPhrase from './seed-phrase'
-import MetaMetricsOptInScreen from './metametrics-opt-in'
+import ImportCoboVault from './import-cobo-vault'
+import CreateVault from './create-vault'
+import CreateCoboVaultHint from './create-cobo-vault-hint'
 
 export default class FirstTimeFlow extends PureComponent {
   static propTypes = {
     completedOnboarding: PropTypes.bool,
     createNewAccount: PropTypes.func,
     createNewAccountFromSeed: PropTypes.func,
+    createNewExternalWallet: PropTypes.func,
+    createNewVault: PropTypes.func,
     history: PropTypes.object,
     isInitialized: PropTypes.bool,
     isUnlocked: PropTypes.bool,
@@ -34,6 +40,7 @@ export default class FirstTimeFlow extends PureComponent {
     showingSeedPhraseBackupAfterOnboarding: PropTypes.bool,
     seedPhraseBackedUp: PropTypes.bool,
     verifySeedPhrase: PropTypes.func,
+    setFirstTimeFlowType: PropTypes.func,
   }
 
   state = {
@@ -85,14 +92,30 @@ export default class FirstTimeFlow extends PureComponent {
     }
   }
 
+  handleCreateNewExternalWallet = async (externalWallet, page) => {
+    const { createNewExternalWallet } = this.props
+    try {
+      return await createNewExternalWallet(externalWallet, page)
+    } catch (error) {
+      throw new Error(error.message)
+    }
+  }
+
+  handleCreateNewVault = async (password) => {
+    const { createNewVault } = this.props
+    try {
+      return await createNewVault(password)
+    } catch (error) {
+      throw new Error(error.message)
+    }
+  }
+
   handleUnlock = async (password) => {
     const { unlockAccount, history, nextRoute } = this.props
 
     try {
-      const seedPhrase = await unlockAccount(password)
-      this.setState({ seedPhrase }, () => {
-        history.push(nextRoute)
-      })
+      await unlockAccount(password)
+      history.push(nextRoute)
     } catch (error) {
       throw new Error(error.message)
     }
@@ -136,6 +159,29 @@ export default class FirstTimeFlow extends PureComponent {
             )}
           />
           <Route
+            path={INITIALIZE_CREATE_NEW_VAULT_ROUTE}
+            render={(routeProps) => (
+              <CreateVault
+                {...routeProps}
+                onCreateNewVault={this.handleCreateNewVault}
+                setFirstTimeFlowType={this.props.setFirstTimeFlowType}
+              />
+            )}
+          />
+          <Route
+            path={INITIALIZE_CREATE_COBO_VAULT_HINT}
+            render={(routeProps) => <CreateCoboVaultHint {...routeProps} />}
+          />
+          <Route
+            path={INITIALIZE_IMPORT_COBO_VAULT_ROUTE}
+            render={(routeProps) => (
+              <ImportCoboVault
+                {...routeProps}
+                createNewCoboVault={this.handleCreateNewExternalWallet}
+              />
+            )}
+          />
+          <Route
             path={INITIALIZE_SELECT_ACTION_ROUTE}
             component={SelectAction}
           />
@@ -151,11 +197,6 @@ export default class FirstTimeFlow extends PureComponent {
             component={EndOfFlow}
           />
           <Route exact path={INITIALIZE_WELCOME_ROUTE} component={Welcome} />
-          <Route
-            exact
-            path={INITIALIZE_METAMETRICS_OPT_IN_ROUTE}
-            component={MetaMetricsOptInScreen}
-          />
           <Route exact path="*" component={FirstTimeFlowSwitch} />
         </Switch>
       </div>

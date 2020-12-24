@@ -23,12 +23,14 @@ import TransactionConfirmed from './transaction-confirmed'
 import CancelTransaction from './cancel-transaction'
 
 import FadeModal from './fade-modal'
-import MetaMetricsOptInModal from './metametrics-opt-in-modal'
 import RejectTransactions from './reject-transactions'
 import ConfirmDeleteNetwork from './confirm-delete-network'
 import AddToAddressBookModal from './add-to-addressbook-modal'
 import EditApprovalPermission from './edit-approval-permission'
 import NewAccountModal from './new-account-modal'
+import ExternalWalletImporter from './external-wallet-importer'
+import BidirectionalTransactionDisplay from './bidirectional-transaction-display'
+import BidirectionalSignatureImporter from './bidirectional-signature-importer'
 
 const modalContainerBaseStyle = {
   transform: 'translate3d(-50%, 0, 0px)',
@@ -188,23 +190,6 @@ const MODALS = {
     },
   },
 
-  METAMETRICS_OPT_IN_MODAL: {
-    contents: <MetaMetricsOptInModal />,
-    mobileModalStyle: {
-      ...modalContainerMobileStyle,
-      width: '100%',
-      height: '100%',
-      top: '0px',
-    },
-    laptopModalStyle: {
-      ...modalContainerLaptopStyle,
-      top: '10%',
-    },
-    contentStyle: {
-      borderRadius: '8px',
-    },
-  },
-
   CONFIRM_RESET_ACCOUNT: {
     contents: <ConfirmResetAccount />,
     mobileModalStyle: {
@@ -350,6 +335,54 @@ const MODALS = {
     },
   },
 
+  EXTERNAL_WALLET_IMPORTER: {
+    contents: <ExternalWalletImporter />,
+    mobileModalStyle: {
+      ...modalContainerMobileStyle,
+    },
+    laptopModalStyle: {
+      ...modalContainerLaptopStyle,
+    },
+    contentStyle: {
+      borderRadius: '8px',
+    },
+    disableBackdropClick: true,
+  },
+
+  BIDIRECTIONAL_TRANSACTION_DISPLAY: {
+    contents: <BidirectionalTransactionDisplay />,
+    mobileModalStyle: {
+      ...modalContainerMobileStyle,
+    },
+    laptopModalStyle: {
+      ...modalContainerLaptopStyle,
+    },
+    contentStyle: {
+      borderRadius: '8px',
+    },
+    customOnHideOpts: {
+      action: actions.cancelBidirectionalTransaction,
+      args: [],
+    },
+  },
+
+  BIDIRECTIONAL_SIGNATURE_IMPORTER: {
+    contents: <BidirectionalSignatureImporter />,
+    mobileModalStyle: {
+      ...modalContainerMobileStyle,
+    },
+    laptopModalStyle: {
+      ...modalContainerLaptopStyle,
+    },
+    contentStyle: {
+      borderRadius: '8px',
+    },
+    customOnHideOpts: {
+      action: actions.cancelBidirectionalTransaction,
+      args: [],
+    },
+  },
+
   CANCEL_TRANSACTION: {
     contents: <CancelTransaction />,
     mobileModalStyle: {
@@ -391,6 +424,7 @@ function mapStateToProps(state) {
   return {
     active: state.appState.modal.open,
     modalState: state.appState.modal.modalState,
+    signPayload: state.metamask.signPayload,
   }
 }
 
@@ -401,6 +435,9 @@ function mapDispatchToProps(dispatch) {
       if (customOnHideOpts && customOnHideOpts.action) {
         dispatch(customOnHideOpts.action(...customOnHideOpts.args))
       }
+    },
+    showBidirectionalTransactionDisplay: () => {
+      dispatch(actions.showBidirectionalTransactionDisplay())
     },
     hideWarning: () => {
       dispatch(actions.hideWarning())
@@ -414,6 +451,8 @@ class Modal extends Component {
     hideModal: PropTypes.func.isRequired,
     hideWarning: PropTypes.func.isRequired,
     modalState: PropTypes.object.isRequired,
+    showBidirectionalTransactionDisplay: PropTypes.func.isRequired,
+    signPayload: PropTypes.object,
   }
 
   hide() {
@@ -425,6 +464,13 @@ class Modal extends Component {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps, _) {
+    if (this.props.signPayload.signId !== nextProps.signPayload.signId) {
+      if (nextProps.signPayload.signId === undefined) {
+        this.hide()
+      } else {
+        this.props.showBidirectionalTransactionDisplay()
+      }
+    }
     if (nextProps.active) {
       this.show()
     } else if (this.props.active) {

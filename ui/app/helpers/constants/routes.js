@@ -24,6 +24,7 @@ const ADD_TOKEN_ROUTE = '/add-token'
 const CONFIRM_ADD_TOKEN_ROUTE = '/confirm-add-token'
 const CONFIRM_ADD_SUGGESTED_TOKEN_ROUTE = '/confirm-add-suggested-token'
 const NEW_ACCOUNT_ROUTE = '/new-account'
+const NEW_BIDIRECTIONAL_QR_ACCOUNT_ROUTE = '/new-bidirectional-qr-account'
 const IMPORT_ACCOUNT_ROUTE = '/new-account/import'
 const CONNECT_HARDWARE_ROUTE = '/new-account/connect'
 const SEND_ROUTE = '/send'
@@ -43,6 +44,9 @@ const INITIALIZE_ROUTE = '/initialize'
 const INITIALIZE_WELCOME_ROUTE = '/initialize/welcome'
 const INITIALIZE_UNLOCK_ROUTE = '/initialize/unlock'
 const INITIALIZE_CREATE_PASSWORD_ROUTE = '/initialize/create-password'
+const INITIALIZE_CREATE_NEW_VAULT_ROUTE = '/initialize/create-new-vault'
+const INITIALIZE_CREATE_COBO_VAULT_HINT = '/initialize/create-keystone-hint'
+const INITIALIZE_IMPORT_COBO_VAULT_ROUTE = '/initialize/import-keystone'
 const INITIALIZE_IMPORT_WITH_SEED_PHRASE_ROUTE =
   '/initialize/create-password/import-with-seed-phrase'
 const INITIALIZE_SELECT_ACTION_ROUTE = '/initialize/select-action'
@@ -50,7 +54,6 @@ const INITIALIZE_SEED_PHRASE_ROUTE = '/initialize/seed-phrase'
 const INITIALIZE_BACKUP_SEED_PHRASE_ROUTE = '/initialize/backup-seed-phrase'
 const INITIALIZE_END_OF_FLOW_ROUTE = '/initialize/end-of-flow'
 const INITIALIZE_CONFIRM_SEED_PHRASE_ROUTE = '/initialize/seed-phrase/confirm'
-const INITIALIZE_METAMETRICS_OPT_IN_ROUTE = '/initialize/metametrics-opt-in'
 
 const CONFIRM_TRANSACTION_ROUTE = '/confirm-transaction'
 const CONFIRM_SEND_ETHER_PATH = '/send-ether'
@@ -92,6 +95,7 @@ const PATH_NAME_MAP = {
   [CONFIRM_ADD_TOKEN_ROUTE]: 'Confirm Add Token Page',
   [CONFIRM_ADD_SUGGESTED_TOKEN_ROUTE]: 'Confirm Add Suggested Token Page',
   [NEW_ACCOUNT_ROUTE]: 'New Account Page',
+  [NEW_BIDIRECTIONAL_QR_ACCOUNT_ROUTE]: 'New Bidirectional Qr Account Page',
   [IMPORT_ACCOUNT_ROUTE]: 'Import Account Page',
   [CONNECT_HARDWARE_ROUTE]: 'Connect Hardware Wallet Page',
   [SEND_ROUTE]: 'Send Page',
@@ -124,12 +128,12 @@ const PATH_NAME_MAP = {
   [INITIALIZE_END_OF_FLOW_ROUTE]: 'End of Initialization Page',
   [INITIALIZE_CONFIRM_SEED_PHRASE_ROUTE]:
     'Initialization Confirm Seed Phrase Page',
-  [INITIALIZE_METAMETRICS_OPT_IN_ROUTE]: 'MetaMetrics Opt In Page',
   [BUILD_QUOTE_ROUTE]: 'Swaps Build Quote Page',
   [VIEW_QUOTE_ROUTE]: 'Swaps View Quotes Page',
   [LOADING_QUOTES_ROUTE]: 'Swaps Loading Quotes Page',
   [AWAITING_SWAP_ROUTE]: 'Swaps Awaiting Swaps Page',
   [SWAPS_ERROR_ROUTE]: 'Swaps Error Page',
+  [INITIALIZE_CREATE_COBO_VAULT_HINT]: 'Initialize Create Cobo Vault Hint Page',
 }
 
 export {
@@ -168,7 +172,6 @@ export {
   SIGNATURE_REQUEST_PATH,
   DECRYPT_MESSAGE_REQUEST_PATH,
   ENCRYPTION_PUBLIC_KEY_REQUEST_PATH,
-  INITIALIZE_METAMETRICS_OPT_IN_ROUTE,
   ADVANCED_ROUTE,
   SECURITY_ROUTE,
   GENERAL_ROUTE,
@@ -195,4 +198,8 @@ export {
   AWAITING_SWAP_ROUTE,
   SWAPS_ERROR_ROUTE,
   SWAPS_MAINTENANCE_ROUTE,
+  INITIALIZE_IMPORT_COBO_VAULT_ROUTE,
+  INITIALIZE_CREATE_NEW_VAULT_ROUTE,
+  NEW_BIDIRECTIONAL_QR_ACCOUNT_ROUTE,
+  INITIALIZE_CREATE_COBO_VAULT_HINT,
 }

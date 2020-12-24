@@ -9,12 +9,10 @@ import { returnToOnboardingInitiator } from '../onboarding-initiator-util'
 export default class EndOfFlowScreen extends PureComponent {
   static contextTypes = {
     t: PropTypes.func,
-    metricsEvent: PropTypes.func,
   }
 
   static propTypes = {
     history: PropTypes.object,
-    completionMetaMetricsName: PropTypes.string,
     setCompletedOnboarding: PropTypes.func,
     onboardingInitiator: PropTypes.exact({
       location: PropTypes.string,
@@ -31,15 +29,8 @@ export default class EndOfFlowScreen extends PureComponent {
   }
 
   async _onOnboardingComplete() {
-    const { setCompletedOnboarding, completionMetaMetricsName } = this.props
+    const { setCompletedOnboarding } = this.props
     await setCompletedOnboarding()
-    this.context.metricsEvent({
-      eventOpts: {
-        category: 'Onboarding',
-        action: 'Onboarding Complete',
-        name: completionMetaMetricsName,
-      },
-    })
   }
 
   onComplete = async () => {
@@ -69,46 +60,30 @@ export default class EndOfFlowScreen extends PureComponent {
       <div className="end-of-flow">
         <MetaFoxLogo />
         <div className="end-of-flow__emoji">🎉</div>
-        <div className="first-time-flow__header">{t('congratulations')}</div>
+        <div className="first-time-flow__header">
+          {t('congratulationsCobo')}
+        </div>
         <div className="first-time-flow__text-block end-of-flow__text-1">
-          {t('endOfFlowMessage1')}
+          {t('endOfFlowMessage1Cobo')}
         </div>
         <div className="first-time-flow__text-block end-of-flow__text-2">
-          {t('endOfFlowMessage2')}
+          {t('endOfFlowMessage2Cobo')}
         </div>
         <div className="end-of-flow__text-3">
-          {`• ${t('endOfFlowMessage3')}`}
+          {`• ${t('endOfFlowMessage3Cobo')}`}
         </div>
         <div className="end-of-flow__text-3">
-          {`• ${t('endOfFlowMessage4')}`}
+          {`• ${t('endOfFlowMessage4Cobo')}`}
         </div>
         <div className="end-of-flow__text-3">
-          {`• ${t('endOfFlowMessage5')}`}
-        </div>
-        <div className="end-of-flow__text-3">
-          {`• ${t('endOfFlowMessage6')}`}
-        </div>
-        <div className="end-of-flow__text-3">
-          {`• ${t('endOfFlowMessage7')}`}
-        </div>
-        <div className="first-time-flow__text-block end-of-flow__text-4">
-          {`*${t('endOfFlowMessage8')}`}&nbsp;
-          <a
-            href="https://metamask.zendesk.com/hc/en-us/articles/360015489591-Basic-Safety-Tips"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span className="first-time-flow__link-text">
-              {t('endOfFlowMessage9')}
-            </span>
-          </a>
+          {`• ${t('endOfFlowMessage5Cobo')}`}
         </div>
         <Button
           type="primary"
           className="first-time-flow__button"
           onClick={this.onComplete}
         >
-          {t('endOfFlowMessage10')}
+          {t('endOfFlowMessage6Cobo')}
         </Button>
         {onboardingInitiator ? (
           <Snackbar

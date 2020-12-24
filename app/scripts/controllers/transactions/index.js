@@ -71,7 +71,6 @@ export default class TransactionController extends EventEmitter {
     this.blockTracker = opts.blockTracker
     this.signEthTx = opts.signTransaction
     this.inProcessOfSigning = new Set()
-    this._trackMetaMetricsEvent = opts.trackMetaMetricsEvent
     this._getParticipateInMetrics = opts.getParticipateInMetrics
 
     this.memStore = new ObservableStore({})
@@ -488,8 +487,6 @@ export default class TransactionController extends EventEmitter {
     this.inProcessOfSigning.add(txId)
     let nonceLock
     try {
-      // approve
-      this.txStateManager.setTxStatusApproved(txId)
       // get next nonce
       const txMeta = this.txStateManager.getTx(txId)
       const fromAddress = txMeta.txParams.from
@@ -505,7 +502,6 @@ export default class TransactionController extends EventEmitter {
         : nonceLock.nextNonce
       const customOrNonce =
         customNonceValue === 0 ? customNonceValue : customNonceValue || nonce
-
       txMeta.txParams.nonce = addHexPrefix(customOrNonce.toString(16))
       // add nonce debugging information to txMeta
       txMeta.nonceDetails = nonceLock.nonceDetails
@@ -521,7 +517,9 @@ export default class TransactionController extends EventEmitter {
     } catch (err) {
       // this is try-catch wrapped so that we can guarantee that the nonceLock is released
       try {
-        this.txStateManager.setTxStatusFailed(txId, err)
+        if (!err.message.includes('CoboVault#Tx_canceled')) {
+          this.txStateManager.setTxStatusFailed(txId, err)
+        }
       } catch (err2) {
         log.error(err2)
       }
@@ -927,11 +925,6 @@ export default class TransactionController extends EventEmitter {
   _trackSwapsMetrics(txMeta, approvalTxMeta) {
     if (this._getParticipateInMetrics() && txMeta.swapMetaData) {
       if (txMeta.txReceipt.status === '0x0') {
-        this._trackMetaMetricsEvent({
-          event: 'Swap Failed',
-          sensitiveProperties: { ...txMeta.swapMetaData },
-          category: 'swaps',
-        })
       } else {
         const tokensReceived = getSwapsTokensReceivedFromTxMeta(
           txMeta.destinationTokenSymbol,
@@ -954,17 +947,6 @@ export default class TransactionController extends EventEmitter {
           .div(txMeta.swapMetaData.estimated_gas, 10)
           .times(100)
           .round(2)}%`
-
-        this._trackMetaMetricsEvent({
-          event: 'Swap Completed',
-          category: 'swaps',
-          sensitiveProperties: {
-            ...txMeta.swapMetaData,
-            token_to_amount_received: tokensReceived,
-            quote_vs_executionRatio: quoteVsExecutionRatio,
-            estimated_vs_used_gasRatio: estimatedVsUsedGasRatio,
-          },
-        })
       }
     }
   }
