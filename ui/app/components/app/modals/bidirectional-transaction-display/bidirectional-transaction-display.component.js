@@ -19,8 +19,8 @@ export default class BidirectionalTransactionDisplay extends Component {
   constructor(props) {
     super(props)
     const { transactionData } = props
-    const data = Buffer.from(transactionData, 'utf-8')
-    const ur = UR.fromBuffer(data)
+    const { payload } = transactionData
+    const ur = new UR(Buffer.from(payload.cbor, 'hex'), payload.type)
     const urEncoder = new UREncoder(ur, 400)
     this.state = {
       currentQRCode: urEncoder.nextPart(),

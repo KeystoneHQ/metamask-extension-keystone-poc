@@ -7,6 +7,8 @@ import { ENVIRONMENT_TYPE_FULLSCREEN } from '../../../../../../app/scripts/lib/e
 import Spinner from '../../../ui/spinner'
 import WebcamUtils from '../../../../../lib/webcam-utils'
 import PageContainerFooter from '../../../ui/page-container/page-container-footer/page-container-footer.component'
+import { URDecoder } from '@ngraveio/bc-ur'
+import { CryptoHDKey } from '@keystonehq/bc-ur-registry-eth'
 
 const READY_STATE = {
   ACCESSING_CAMERA: 'ACCESSING_CAMERA',
@@ -160,10 +162,16 @@ export default class ExternalWalletImporter extends Component {
     let values = {}
     // {xfp: "", xpub: "", path: ""}
     try {
-      const result = JSON.parse(content)
-      if (result.xfp && result.xpub && result.path) {
+      const urDecoder = new URDecoder()
+      urDecoder.receivePart(content)
+      const ur = urDecoder.resultUR()
+      const cryptoHDKey = CryptoHDKey.fromCBOR(ur.cbor)
+      const xfp = cryptoHDKey.getOrigin().getSourceFingerprint().toString('hex')
+      const xpub = cryptoHDKey.getBip32Key()
+      const path = `m/${cryptoHDKey.getOrigin().getPath()}`
+      if (xfp && xpub && path) {
         type = 'external-wallet'
-        values = result
+        values = result/*  */
       }
     } catch (e) {
       log.error(e)

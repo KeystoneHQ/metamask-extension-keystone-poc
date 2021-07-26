@@ -71,7 +71,6 @@
   "dependencies": {
     "3box": "^1.10.2",
     "@babel/runtime": "^7.5.5",
-    "@cvbb/bc-ur": "^0.2.9",
     "@download/blockies": "^1.0.3",
     "@formatjs/intl-relativetimeformat": "^5.2.6",
     "@fortawesome/fontawesome-free": "^5.13.0",
@@ -85,6 +84,7 @@
     "@metamask/jazzicon": "^2.0.0",
     "@metamask/logo": "^2.5.0",
     "@metamask/obs-store": "^5.0.0",
+    "@ngraveio/bc-ur": "^1.1.6",
     "@popperjs/core": "^2.4.0",
     "@reduxjs/toolkit": "^1.3.2",
     "@sentry/browser": "^5.26.0",

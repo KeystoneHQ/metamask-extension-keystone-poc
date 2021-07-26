@@ -8,7 +8,7 @@ import BidirectionalTransactionDisplay from './bidirectional-transaction-display
 
 const mapStateToProps = (state) => {
   return {
-    transactionData: JSON.stringify(state.metamask.signPayload),
+    transactionData: state.metamask.signPayload,
   }
 }
 

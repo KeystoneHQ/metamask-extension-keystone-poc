@@ -4,6 +4,12 @@ import hash from 'hash.js'
 import ethUtil from 'ethereumjs-util'
 import HDKey from 'hdkey'
 import { ObservableStore } from '@metamask/obs-store'
+import * as uuid from 'uuid'
+import {
+  ETHSignature,
+  EthSignRequest,
+  CryptoHDKey,
+} from '@keystonehq/bc-ur-registry-eth'
 
 const hdPathString = `m/44'/60'/0'`
 const keyringType = 'Bidirectional QrCode Device'
@@ -141,29 +147,35 @@ class BidirectionalQrAccountKeyring extends EventEmitter {
   signTransaction(address, tx) {
     return new Promise((resolve, reject) => {
       tx.v = tx.getChainId()
-      const txHex = tx.serialize().toString('hex')
+      const requestId = uuid.v4()
       const hdPath = this._pathFromAddress(address)
-      const signId = hash
-        .sha256()
-        .update(`${txHex}${hdPath}${this.xfp}`)
-        .digest('hex')
-        .slice(0, 8)
-      const signPayload = {
-        txHex,
-        xfp: this.xfp,
+      const ethSignRequest = EthSignRequest.constructETHRequest(
+        AirGapedKeyring.serializeTx(tx),
+        DataType.transaction,
         hdPath,
-        signId,
+        this.xfp,
+        requestId,
+        chainId,
+      )
+      const ur = ethSignRequest.toUR()
+      const signPayload = {
+        signId: requestId,
+        payload: {
+          type: ur.type,
+          cbor: ur.cbor.toString('hex'),
+        },
       }
       this.memStore.updateState({
         signPayload,
       })
-      this.once(`${signId}-signed`, (r, s, v) => {
+
+      this.once(`${requestId}-signed`, (r, s, v) => {
         tx.r = r
         tx.s = s
         tx.v = v
         resolve(tx)
       })
-      this.once(`${signId}-canceled`, () => {
+      this.once(`${requestId}-canceled`, () => {
         reject(
           new Error('Keystone#Tx_canceled. Signing canceled, please retry'),
         )
@@ -229,21 +241,28 @@ class BidirectionalQrAccountKeyring extends EventEmitter {
   signTypedData(withAccount, typedData) {
     return new Promise((resolve, reject) => {
       const hdPath = this._pathFromAddress(withAccount)
-      const signId = hash
-        .sha256()
-        .update(`${JSON.stringify(typedData)}${hdPath}${this.xfp}`)
-        .digest('hex')
-        .slice(0, 8)
-      const signPayload = {
-        data: typedData,
-        xfp: this.xfp,
+      const requestId = uuid.v4()
+      const ethSignRequest = EthSignRequest.constructETHRequest(
+        Buffer.from(JSON.stringify(typedData), 'utf-8'),
+        DataType.typedData,
         hdPath,
-        signId,
+        this.xfp,
+        requestId,
+        undefined,
+        withAccount,
+      )
+      const ur = ethSignRequest.toUR()
+      const signPayload = {
+        signId: requestId,
+        payload: {
+          type: ur.type,
+          cbor: ur.cbor.toString('hex'),
+        },
       }
       this.memStore.updateState({
         signPayload,
       })
-      this.once(`${signId}-signed`, (r, s, v) => {
+      this.once(`${requestId}-signed`, (r, s, v) => {
         resolve(Buffer.concat([r, s, v]))
       })
       this.once(`${signId}-canceled`, () => {

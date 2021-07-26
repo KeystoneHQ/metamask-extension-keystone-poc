@@ -8,6 +8,8 @@ import Spinner from '../../../ui/spinner'
 import WebcamUtils from '../../../../../lib/webcam-utils'
 import PageContainerFooter from '../../../ui/page-container/page-container-footer/page-container-footer.component'
 import { URDecoder } from '@apocentre/bc-ur'
+import { ETHSignature } from '@keystonehq/bc-ur-registry-eth'
+import * as uuid from 'uuid'
 
 const READY_STATE = {
   ACCESSING_CAMERA: 'ACCESSING_CAMERA',
@@ -187,12 +189,15 @@ export default class BidirectionalSignatureImporter extends Component {
       const { urDecoder } = this.state
       urDecoder.receivePart(data)
       if (urDecoder.isComplete()) {
-        const result = JSON.parse(
-          urDecoder.resultUR().decodeCBOR().toString('utf-8'),
-        )
-        const { signId } = result
+        const result = urDecoder.resultUR()
+        const ethSignature = ETHSignature.fromCBOR(result.cbor)
+        const requestId = ethSignature.getRequestId()
+        const signId = uuid.stringify(requestId)
         if (signId === this.props.signPayload.signId) {
-          this.props.submitSignature(result)
+          this.props.submitSignature({
+            signId,
+            signature: ethSignature.getSignature().toString('hex'),
+          })
           this.stopAndClose()
         } else {
           throw new Error('#mismatched_signId')
