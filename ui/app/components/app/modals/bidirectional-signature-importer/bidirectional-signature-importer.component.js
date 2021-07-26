@@ -7,7 +7,7 @@ import { ENVIRONMENT_TYPE_FULLSCREEN } from '../../../../../../app/scripts/lib/e
 import Spinner from '../../../ui/spinner'
 import WebcamUtils from '../../../../../lib/webcam-utils'
 import PageContainerFooter from '../../../ui/page-container/page-container-footer/page-container-footer.component'
-import { URDecoder } from '@apocentre/bc-ur'
+import { URDecoder } from '@ngraveio/bc-ur'
 import { ETHSignature } from '@keystonehq/bc-ur-registry-eth'
 import * as uuid from 'uuid'
 
@@ -204,6 +204,7 @@ export default class BidirectionalSignatureImporter extends Component {
         }
       }
     } catch (error) {
+      console.error(error);
       this.setState({ error })
     }
   }

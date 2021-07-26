@@ -350,6 +350,7 @@ function createScriptTasks({ browserPlatforms, livereload }) {
     }
 
     let bundler = browserify(browserifyOpts)
+      .transform('babelify', {global: true, only: ["node_modules/@keystonehq/"]})
       .transform('babelify')
       .transform('brfs')
 

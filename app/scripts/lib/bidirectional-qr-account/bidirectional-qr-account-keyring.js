@@ -1,15 +1,10 @@
 import { EventEmitter } from 'events'
-import hash from 'hash.js'
 
 import ethUtil from 'ethereumjs-util'
 import HDKey from 'hdkey'
 import { ObservableStore } from '@metamask/obs-store'
 import * as uuid from 'uuid'
-import {
-  ETHSignature,
-  EthSignRequest,
-  CryptoHDKey,
-} from '@keystonehq/bc-ur-registry-eth'
+import { EthSignRequest, DataType } from '@keystonehq/bc-ur-registry-eth'
 
 const hdPathString = `m/44'/60'/0'`
 const keyringType = 'Bidirectional QrCode Device'
@@ -53,6 +48,7 @@ class BidirectionalQrAccountKeyring extends EventEmitter {
   }
 
   deserialize(opts = {}) {
+    console.log(opts)
     this.hdPath = opts.hdPath || hdPathString
     this.accounts = opts.accounts || []
     this.page = opts.page || 0
@@ -150,12 +146,12 @@ class BidirectionalQrAccountKeyring extends EventEmitter {
       const requestId = uuid.v4()
       const hdPath = this._pathFromAddress(address)
       const ethSignRequest = EthSignRequest.constructETHRequest(
-        AirGapedKeyring.serializeTx(tx),
+        tx.serialize(),
         DataType.transaction,
         hdPath,
         this.xfp,
         requestId,
-        chainId,
+        tx.getChainId(),
       )
       const ur = ethSignRequest.toUR()
       const signPayload = {
@@ -183,61 +179,48 @@ class BidirectionalQrAccountKeyring extends EventEmitter {
     })
   }
 
-  //
-  // signMessage(withAccount, data) {
-  //   return this.signPersonalMessage(withAccount, data)
-  // }
-  //
-  // // For personal_sign, we need to prefix the message:
-  // signPersonalMessage(withAccount, message) {
-  //   return new Promise((resolve, reject) => {
-  //     this.unlock()
-  //       .then((status) => {
-  //         setTimeout(
-  //           (_) => {
-  //             TrezorConnect.ethereumSignMessage({
-  //               path: this._pathFromAddress(withAccount),
-  //               message: ethUtil.stripHexPrefix(message),
-  //               hex: true,
-  //             })
-  //               .then((response) => {
-  //                 if (response.success) {
-  //                   if (
-  //                     response.payload.address !==
-  //                     ethUtil.toChecksumAddress(withAccount)
-  //                   ) {
-  //                     reject(
-  //                       new Error('signature doesnt match the right address'),
-  //                     )
-  //                   }
-  //                   const signature = `0x${response.payload.signature}`
-  //                   resolve(signature)
-  //                 } else {
-  //                   reject(
-  //                     new Error(
-  //                       (response.payload && response.payload.error) ||
-  //                         'Unknown error',
-  //                     ),
-  //                   )
-  //                 }
-  //               })
-  //               .catch((e) => {
-  //                 console.log('Error while trying to sign a message ', e)
-  //                 reject(new Error((e && e.toString()) || 'Unknown error'))
-  //               })
-  //             // This is necessary to avoid popup collision
-  //             // between the unlock & sign trezor popups
-  //           },
-  //           status === 'just unlocked' ? DELAY_BETWEEN_POPUPS : 0,
-  //         )
-  //       })
-  //       .catch((e) => {
-  //         console.log('Error while trying to sign a message ', e)
-  //         reject(new Error((e && e.toString()) || 'Unknown error'))
-  //       })
-  //   })
-  // }
-  //
+  signMessage(withAccount, data) {
+    return this.signPersonalMessage(withAccount, data)
+  }
+
+  // For personal_sign, we need to prefix the message:
+  signPersonalMessage(withAccount, message) {
+    return new Promise((resolve, reject) => {
+      const hdPath = this._pathFromAddress(withAccount)
+      const requestId = uuid.v4()
+      const ethSignRequest = EthSignRequest.constructETHRequest(
+        Buffer.from(message, 'hex'),
+        DataType.personalMessage,
+        hdPath,
+        this.xfp,
+        requestId,
+        undefined,
+        withAccount,
+      )
+      const ur = ethSignRequest.toUR()
+      const signPayload = {
+        signId: requestId,
+        payload: {
+          type: ur.type,
+          cbor: ur.cbor.toString('hex'),
+        },
+      }
+      this.memStore.updateState({
+        signPayload,
+      })
+      this.once(`${requestId}-signed`, (r, s, v) => {
+        resolve('0x' + Buffer.concat([r, s, v]).toString('hex'))
+      })
+      this.once(`${signId}-canceled`, () => {
+        reject(
+          new Error(
+            'Keystone#TypedMsg_canceled. Signing canceled, please retry',
+          ),
+        )
+      })
+    })
+  }
+
   signTypedData(withAccount, typedData) {
     return new Promise((resolve, reject) => {
       const hdPath = this._pathFromAddress(withAccount)
@@ -314,6 +297,7 @@ class BidirectionalQrAccountKeyring extends EventEmitter {
   }
 
   _addressFromIndex(pb, i) {
+    console.log(this.xpub, this.xfp)
     if (!this.hdk) {
       this.hdk = HDKey.fromExtendedKey(this.xpub)
     }

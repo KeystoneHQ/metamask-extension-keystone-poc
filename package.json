@@ -74,6 +74,7 @@
     "@download/blockies": "^1.0.3",
     "@formatjs/intl-relativetimeformat": "^5.2.6",
     "@fortawesome/fontawesome-free": "^5.13.0",
+    "@keystonehq/bc-ur-registry-eth": "^0.3.9",
     "@material-ui/core": "^4.11.0",
     "@metamask/contract-metadata": "^1.19.0",
     "@metamask/controllers": "^4.2.0",
@@ -178,12 +179,13 @@
     "single-call-balance-checker-abi": "^1.0.0",
     "swappable-obj-proxy": "^1.1.0",
     "textarea-caret": "^3.0.1",
+    "uuid": "^8.3.2",
     "valid-url": "^1.0.9",
     "web3": "^0.20.7",
     "web3-stream-provider": "^4.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.1",
+    "@babel/core": "^7.14.8",
     "@babel/eslint-parser": "^7.12.1",
     "@babel/eslint-plugin": "^7.12.1",
     "@babel/plugin-proposal-class-properties": "^7.5.5",

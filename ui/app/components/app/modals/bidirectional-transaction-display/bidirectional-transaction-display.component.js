@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import QRCode from 'qrcode.react'
 import Button from '../../../ui/button'
-import { UR, UREncoder } from '@apocentre/bc-ur'
+import { UR, UREncoder } from '@ngraveio/bc-ur'
 
 export default class BidirectionalTransactionDisplay extends Component {
   static propTypes = {

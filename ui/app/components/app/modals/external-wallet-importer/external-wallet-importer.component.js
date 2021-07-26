@@ -169,9 +169,14 @@ export default class ExternalWalletImporter extends Component {
       const xfp = cryptoHDKey.getOrigin().getSourceFingerprint().toString('hex')
       const xpub = cryptoHDKey.getBip32Key()
       const path = `m/${cryptoHDKey.getOrigin().getPath()}`
+      const result = {
+        xfp,
+        xpub,
+        path,
+      }
       if (xfp && xpub && path) {
         type = 'external-wallet'
-        values = result/*  */
+        values = result
       }
     } catch (e) {
       log.error(e)

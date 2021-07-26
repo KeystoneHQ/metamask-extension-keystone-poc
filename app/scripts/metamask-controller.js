@@ -1121,6 +1121,7 @@ export default class MetamaskController extends EventEmitter {
   }
 
   async createBidirectionalQrAccount(externalWallet, page) {
+    console.log(externalWallet)
     const keyring = await this.getBidirectionalQrKeyring(externalWallet)
     let accounts = []
     switch (page) {
@@ -1193,6 +1194,7 @@ export default class MetamaskController extends EventEmitter {
   }
 
   async getBidirectionalQrKeyring(externalWallet) {
+    console.log("getBidirectionalQrKeyring", externalWallet);
     const keyringName = BidirectionalQrAccountKeyring.type
     let keyring = await this.keyringController.getKeyringsByType(keyringName)[0]
     if (!keyring) {

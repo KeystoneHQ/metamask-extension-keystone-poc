@@ -128,6 +128,7 @@ export function importExternalWallet(externalWallet, page) {
         page,
       )
     } catch (error) {
+      console.error(error);
       log.error(error)
       dispatch(displayWarning(error.message))
       throw error
