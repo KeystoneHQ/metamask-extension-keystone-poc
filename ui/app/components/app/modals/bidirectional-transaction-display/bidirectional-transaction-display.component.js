@@ -68,6 +68,9 @@ export default class BidirectionalTransactionDisplay extends Component {
         <div style={{ paddingLeft: 20, paddingRight: 20, paddingBottom: 20 }}>
           {this.context.t('scanCoboDescription')}
         </div>
+        <div style={{ paddingLeft: 20, paddingRight: 20, paddingBottom: 20 }}>
+          {this.context.t('keystoneVersion')}
+        </div>
         <div className="bidirectional-transaction-display__button-group">
           <Button
             className="bidirectional-transaction-display__button"

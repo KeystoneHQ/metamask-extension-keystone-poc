@@ -1397,6 +1397,9 @@
   "scanCoboDescription": {
     "message": "After Keystone signed the transaction, click Scan Keystone to broadcast the transaction."
   },
+  "keystoneVersion": {
+    "message": "Please make sure your Keystone Firmware Version is V1.3.0 or above."
+  },
   "scanInstructions": {
     "message": "Place the QR code in front of your camera"
   },

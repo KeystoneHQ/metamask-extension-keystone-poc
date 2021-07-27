@@ -913,6 +913,9 @@
   "scanCoboDescription": {
     "message": "铠石钱包对交易签完名后，点击下方“扫描铠石钱包二维码”广播该交易"
   },
+  "keystoneVersion": {
+    "message": "请确保您的铠石钱包固件版本在V1.3.0及以上。"
+  },
   "scanInstructions": {
     "message": "请将二维码置于镜头前"
   },
