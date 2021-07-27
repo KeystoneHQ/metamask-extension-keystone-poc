@@ -191,6 +191,16 @@ export default class ExternalWalletImporter extends Component {
     this.props.hideModal()
   }
 
+  cancel = () => {
+    if (this.codeReader) {
+      this.teardownCodeReader()
+    }
+    this.props.qrCodeDetected(null)
+    const { history } = this.props
+    history.goBack()
+    this.props.hideModal()
+  }
+
   tryAgain = () => {
     clearTimeout(this.permissionChecker)
     if (this.codeReader) {
@@ -224,7 +234,7 @@ export default class ExternalWalletImporter extends Component {
         {title ? <div className="qr-scanner__title">{title}</div> : null}
         <div className="qr-scanner__error">{msg}</div>
         <PageContainerFooter
-          onCancel={this.stopAndClose}
+          onCancel={this.cancel}
           onSubmit={this.tryAgain}
           cancelText={t('cancel')}
           submitText={t('tryAgain')}
