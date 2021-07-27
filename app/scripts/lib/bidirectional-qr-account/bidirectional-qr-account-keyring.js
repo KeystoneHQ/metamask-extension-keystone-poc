@@ -183,13 +183,12 @@ class BidirectionalQrAccountKeyring extends EventEmitter {
     return this.signPersonalMessage(withAccount, data)
   }
 
-  // For personal_sign, we need to prefix the message:
   signPersonalMessage(withAccount, message) {
     return new Promise((resolve, reject) => {
       const hdPath = this._pathFromAddress(withAccount)
       const requestId = uuid.v4()
       const ethSignRequest = EthSignRequest.constructETHRequest(
-        Buffer.from(message, 'hex'),
+        Buffer.from(message.replace('0x', ''), 'hex'),
         DataType.personalMessage,
         hdPath,
         this.xfp,
@@ -211,7 +210,7 @@ class BidirectionalQrAccountKeyring extends EventEmitter {
       this.once(`${requestId}-signed`, (r, s, v) => {
         resolve('0x' + Buffer.concat([r, s, v]).toString('hex'))
       })
-      this.once(`${signId}-canceled`, () => {
+      this.once(`${requestId}-canceled`, () => {
         reject(
           new Error(
             'Keystone#TypedMsg_canceled. Signing canceled, please retry',
@@ -248,7 +247,7 @@ class BidirectionalQrAccountKeyring extends EventEmitter {
       this.once(`${requestId}-signed`, (r, s, v) => {
         resolve(Buffer.concat([r, s, v]))
       })
-      this.once(`${signId}-canceled`, () => {
+      this.once(`${requestId}-canceled`, () => {
         reject(
           new Error(
             'Keystone#TypedMsg_canceled. Signing canceled, please retry',

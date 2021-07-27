@@ -6,7 +6,7 @@ import { UR, UREncoder } from '@ngraveio/bc-ur'
 
 export default class BidirectionalTransactionDisplay extends Component {
   static propTypes = {
-    transactionData: PropTypes.string.isRequired,
+    transactionData: PropTypes.object.isRequired,
     hideModal: PropTypes.func,
     cancelTransaction: PropTypes.func,
     showBidirectionalSignatureImporter: PropTypes.func.isRequired,
