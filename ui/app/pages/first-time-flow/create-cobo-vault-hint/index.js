@@ -24,6 +24,19 @@ export default class CreateCoboVaultHint extends Component {
         <MetaFoxLogo />
         <div className="create-cobo-vault-hint">
           <div className="first-time-flow__header">{t('syncCoboTitle')}</div>
+          <p className="create-cobo-vault-hint__danger">
+            {t('upgradeWarning')}
+          </p>
+          <p className="create-cobo-vault-hint__download">
+            <a
+              className="create-cobo-vault-hint__link"
+              href="https://keyst.one/firmware"
+              target="_blank"
+            >
+              {t('clickHere')}
+            </a>
+            {t('toDownloadLatest')}
+          </p>
           <p className="create-cobo-vault-hint__text">{t('syncStep1')}</p>
           <p className="create-cobo-vault-hint__text">{t('syncStep2')}</p>
           <p className="create-cobo-vault-hint__text">{t('syncStep3')}</p>

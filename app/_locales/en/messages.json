@@ -1955,11 +1955,20 @@
   "syncLinkDescription": {
     "message": "Click here to view detailed tutorial"
   },
+  "upgradeWarning": {
+    "message": "Please upgrade the Keystone firmware version to V1.3.0 or above, otherwise it will not sync."
+  },
+  "clickHere": {
+    "message": "Click here"
+  },
+  "toDownloadLatest": {
+    "message": " to download the latest version of the firmware."
+  },
   "syncStep1": {
     "message": "1. Open Keystone"
   },
   "syncStep2": {
-    "message": "2. Select watch-only wallet is “Keystone Ethereum Extension”"
+    "message": "2. Select watch-only wallet is “Web3”"
   },
   "syncStep3": {
     "message": "3. Click “Scan Keystone” button and scan the QR Code displays on Keystone"

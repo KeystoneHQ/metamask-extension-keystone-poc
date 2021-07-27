@@ -1,4 +1,12 @@
 .create-cobo-vault-hint {
+  &__danger {
+    color: red;
+  }
+
+  &__download {
+    margin-bottom: 24px;
+  }
+
   &__text {
     line-height: 24px;
   }
