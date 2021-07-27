@@ -353,6 +353,7 @@ const MODALS = {
     contents: <BidirectionalTransactionDisplay />,
     mobileModalStyle: {
       ...modalContainerMobileStyle,
+      transform: 'translate3d(-50%, -10%, 0px)',
     },
     laptopModalStyle: {
       ...modalContainerLaptopStyle,
