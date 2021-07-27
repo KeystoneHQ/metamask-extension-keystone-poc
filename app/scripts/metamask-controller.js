@@ -1562,7 +1562,7 @@ export default class MetamaskController extends EventEmitter {
     // sets the status op the message to 'approved'
     // and removes the metamaskId for signing
     return this.personalMessageManager
-      .approveMessage(msgParams)
+      .prepMsgForSigning(msgParams)
       .then((cleanMsgParams) => {
         // signs the message
         return this.keyringController.signPersonalMessage(cleanMsgParams)
@@ -1570,6 +1570,7 @@ export default class MetamaskController extends EventEmitter {
       .then((rawSig) => {
         // tells the listener that the message has been signed
         // and can be returned to the dapp
+        this.personalMessageManager.setMsgStatusApproved(msgId);
         this.personalMessageManager.setMsgStatusSigned(msgId, rawSig)
         return this.getState()
       })
