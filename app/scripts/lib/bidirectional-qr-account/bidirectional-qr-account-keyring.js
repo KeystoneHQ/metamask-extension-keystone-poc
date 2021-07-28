@@ -245,7 +245,7 @@ class BidirectionalQrAccountKeyring extends EventEmitter {
         signPayload,
       })
       this.once(`${requestId}-signed`, (r, s, v) => {
-        resolve(Buffer.concat([r, s, v]))
+        resolve(`0x${Buffer.concat([r, s, v]).toString('hex')}`)
       })
       this.once(`${requestId}-canceled`, () => {
         reject(
